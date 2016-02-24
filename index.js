@@ -152,9 +152,11 @@ CanaryStore.prototype.features = function() {
       variants: variants[feature].map(function(variant) {
         return {
           value: variant,
-          selected: selected === variant
+          isSelected: selected === variant,
+          select: self.override.bind(self, feature, variant)
         };
       }),
+      selected: selected,
       assignment: assignments[feature],
       hasAssignment: typeof assignments[feature] !== 'undefined',
       override: overrides[feature],
@@ -178,7 +180,7 @@ CanaryStore.prototype._onresource = function(feature) {
 
   if (typeof assignments[feature] !== 'undefined') return this._done();
 
-  var variants = self._variants[feature];
+  var variants = self._variants[feature] || [false, true];
 
   self._pending++;
   clearTimeout(self._timeout);
